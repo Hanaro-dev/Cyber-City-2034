@@ -1,0 +1,253 @@
+<?php
+	$statcolors = array("#820503","#8A250E","#8C3011","#8F3A14","#974B1A","#A45920","#704715","#5C4210","#4A400D","#38D3D0A","#033500");
+	
+?>
+
+	<table id="member_action_fichestat" style="width:470px; float :left; padding:10px;">
+		<tr>
+			<td class="title" colspan="2">Statistiques</td>
+		</tr>
+		<?
+		foreach($STAT as $stat)
+		{
+		?>
+			<tr>
+				<td class="name">
+					<?=$stat["nom"];?>
+					<br /><span class="XP">XP: <?=$stat["xp"];?></span>
+					<br /><span class="XP">LVL: <?=$stat["lvl"];?></span>
+				</td>
+				<td class="value" style="text-align:center;">
+					<table style="width:361px; float : right;">
+					<tr>
+						<?
+						//Afficher la barre des niveaux négatifs
+						for($i=-5;$i<0;$i++)
+						{
+							if($stat["lvl"]<=$i)
+							{
+								$bgcolor = $statcolors[$i+5];
+								?>
+								<td class="lvl" style="background-color:<?=$bgcolor;?>;"></td>
+								<?
+							}
+							else
+							{
+								?>
+								<td class="lvl"></td>
+								<?
+							}
+						}
+						?>
+						
+						<td class="lvl" style="background-color:<?=$statcolors[5];?>;"></td>
+	
+						<?
+						//Afficher la barre des niveaux positifs
+						for($i=1;$i<6;$i++)
+						{
+							if($stat["lvl"]>=$i)
+							{
+								$bgcolor = $statcolors[$i+5];
+								?>
+								<td class="lvl" style="background-color:<?=$bgcolor;?>;"></td>
+								<?
+							}
+							else
+							{
+								?>
+								<td class="lvl"></td>
+								<?
+							}
+						}
+						?>
+					</tr>
+					<tr>
+						<td colspan="5">
+							<?
+							//Afficher la barre de progression vers le niveau précédent
+						
+							$TotalXP = $stat['prevBarMax'];
+							$CurrentXP = $stat['prevBarPos'];
+						
+							if ($TotalXP==0) //Infini
+							{
+								$TotalXP = "&infin;";
+								$percent = 100;
+								$percent2= 0;
+							}
+							else
+							{
+								$percent = $CurrentXP*100/$TotalXP;
+								$percent2= 100-$percent;
+							}
+							?>
+							<table style="width:100%;">
+							<tr>
+								<td class="StatMalusBar_empty" style="width:<?=$percent2;?>%;"></td>
+								<td class="StatMalusBar_full" style="width:<?=$percent;?>%;"></td>
+							</tr>
+							</table>
+							<abbr class="XP" title="Progression d'XP avant de perdre un niveau.">
+								<?=$CurrentXP;?>/<?=$TotalXP;?>
+							</abbr>
+						</td>
+					
+						<td></td>
+					
+						<td colspan="5">
+							<?
+							//Afficher la barre de progression vers le niveau suivant
+						
+							$TotalXP = $stat['nextBarMax'];
+							$CurrentXP = $stat['nextBarPos'];
+						
+							if ($TotalXP==0) //Infini
+							{
+								$TotalXP = "&infin;";
+								$percent = 100;
+								$percent2= 0;
+							}
+							else
+							{
+								$percent = $CurrentXP*100/$TotalXP;
+								$percent2= 100-$percent;
+							}
+							?>
+							<table style="width:100%;" cellspacing="0">
+							<tr>
+								<td class="StatBonusBar_full" style="width:<?=$percent;?>%;"></td>
+								<td class="StatBonusBar_empty" style="width:<?=$percent2;?>%;"></td>
+							</tr>
+							</table>
+							<abbr class="XP" title="Progression d'XP avant de gagner un niveau.">
+								<?=$CurrentXP;?>/<?=$TotalXP;?>
+							</abbr>
+						</td>
+					</tr>
+					</table>
+				</td>
+			</tr>
+		<?
+		}
+		?>
+	</table>
+	<table id="member_action_fichecomp" style="width:470px; float :right; padding:10px;">
+	
+		<tr>
+			<td class="title" colspan="2">Comp&eacute;tences</td>
+		</tr>
+		<?
+		foreach($COMP as $comp)
+		{
+			if($comp["xp"]>0)
+			{
+				
+				if ($comp["totalXp"]==0) //Infini
+				{
+					$TotalXP = "&infin;";
+				}
+				else
+				{
+					$TotalXP = $comp["totalXp"];
+				}
+				?>
+				<tr>
+					<td class="name">
+						<?=$comp["nom"];?>
+						<br />
+						<p class ="XP" >
+							<abbr title="Progression d'XP avant de gagner un niveau.">
+								<?=$comp["currentXp"];?>/<?=$TotalXP;?>
+							</abbr>
+						</p>
+					</td>
+					<td class="value" style="text-align:center;">
+						<table style="width:320px; float : right; cellspacing="0">
+						<tr>
+							<?
+							for($i=1;$i<=12;$i++)
+							{
+								$caption = $i;
+								if($i > $comp["lvl"] && $i <= $comp['reallvl'] && $comp['reallvl'] > $comp["lvl"])
+								{
+									$className = 'bonus';
+								}
+								elseif($i <= $comp["lvl"] && $i > $comp['reallvl'] && $comp['reallvl'] < $comp["lvl"])
+								{
+									$className = 'malus';
+								}
+								elseif($i <= $comp["lvl"])
+								{
+									$className = 'normal';
+								}
+								else
+								{
+									$className = 'invisible';
+									$caption = '';
+								}
+								if($i == $comp["reallvl"])
+								{
+									$className .= ' current';
+								}
+								?>
+								<td class="<?=$className;?>"><?=$caption;?></td>
+								<?
+							}
+							?>
+						</tr>
+						<tr>
+							<td colspan="12">
+								<?
+								if (!is_numeric($TotalXP)) //Infini
+								{
+									$percent = 100;
+									$percent2= 0;
+								}
+								else
+								{
+									$percent = $comp["currentXp"]*100/$comp["totalXp"];
+									$percent2= 100-$percent;
+								}
+								?>
+								<table style="width:100%;" >
+								<tr>
+									<td class="CompBar_full" style="width:<?=$percent;?>%;"></td>
+									<td class="CompBar_empty" style="width:<?=$percent2;?>%;"></td>
+								</tr>
+								</table>
+							</td>
+						</tr>
+						</table>
+					</td>
+				</tr>
+			<?
+			}
+		}
+		?>
+
+	</table>
+	
+	<table id="member_action_fichetrait" style="width:100%; margin-top : 20px;">
+			<tr>
+				<td class="title">Caractéristiques</td>
+			</tr>
+			<td>
+			<br />
+			<?
+			if(isset($CARACT)){
+				foreach($CARACT as $caract){ ?>
+					<div class="caracs">
+						<p class="name">
+							<?=$caract['nom'];?> <span style="font-style:italic;font-weight:normal;">(<?=$caract['cat'];?>)</span>
+						</p>
+						<p class="value" style="text-align:left;padding-bottom:15px;"><?=$caract['desc'];?></p>
+					</div>
+				<?	}
+			} ?></td>
+			
+
+		</table>
+
+
+

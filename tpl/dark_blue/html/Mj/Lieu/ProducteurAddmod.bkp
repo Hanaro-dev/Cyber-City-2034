@@ -1,0 +1,123 @@
+<script type="text/javascript">
+//<!--
+Changer_Lieu = function()
+{
+	var lieu=prompt('Lieu ? (Nom technique)','');
+	if(lieu!=""){
+		var myAjax = new Ajax.Updater(
+			'div_lieu', 
+			'?mj=Search&popup=1', 
+			{
+				method: 'post', 
+				parameters: 'searchWhat=selectLieu&search='+lieu
+			});
+	}
+}
+Changer_Lieu2 = function(id, lieu)
+{
+	$('div_lieu').innerHTML = lieu+' (<a href="#" onclick="Changer_Lieu();">Changer</a>)\n<input type="hidden" name="lieuId" value="'+id+'" />';
+}
+//-->
+</script>
+
+<br />
+<a href="?mj=Lieu_Producteur">&lt;&lt; Retour à la liste des producteurs</a><br />
+<form method="post" name="form1" action="?mj=Lieu_Producteur<?=$SUBMITNAME;?>">
+	<table align="center">
+		<tr>
+			<td class="title" colspan="2"><?=$ACTIONTYPETXT;?> un producteur</td>
+		</tr>
+		<? if( $SHOWID == true ){ ?>
+			<tr>
+				<td class="name">ID du producteur</td>
+				<td class="value"><input type="hidden" name="id" value="<?=$PROD['id'];?>" /><?=$PROD['id'];?></td>
+			</tr>
+		<? } ?>
+		
+		
+		<tr>
+			<td class="name">On peut travailler à la production à partir de ce lieu</td>
+			<td class="value">
+				<div id="div_lieu" style="height:6em;overflow:auto;">
+					<?=$PROD['nom_technique'];?> (<a href="#" onclick="Changer_Lieu();">Changer</a>)
+					<input type="hidden" name="lieuId" value="<?=$PROD['lieuId'];?>" />
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="name">Cash</td>
+			<td class="value">
+				<input type="text" class="text" name="cash" value="<?=$PROD['cash'];?>" size="5" /> <?=GAME_DEVISE;?>
+			</td>
+		</tr>
+		<tr>
+			<td class="name">1 PA donne</td>
+			<td class="value">
+				<input type="text" class="text" name="pa_cash_ratio" value="<?=$PROD['pa_cash_ratio'];?>" size="5" />
+			</td>
+		</tr>
+		<tr>
+			<td class="name">PA en banque (nombre de PA qui ont été travaillés)</td>
+			<td class="value">
+				<input type="text" class="text" name="total_pa" value="<?=$PROD['total_pa'];?>" size="5" /> PA
+			</td>
+		</tr>
+		<tr>
+			<td class="name">PA requis pour lancer une production</td>
+			<td class="value">
+				<input type="text" class="text" name="pa_needed" value="<?=$PROD['pa_needed'];?>" size="5" /> PA
+			</td>
+		</tr>
+		<tr>
+			<td class="name">Compétence requise pour la production</td>
+			<td class="value">
+                <select name="comp_requise" id="comp_requise" onchange="changeType();">
+                    <option value="" <?if($PROD['comp_requise']==''){?> SELECTED <? } ?>>Aucune</option>
+                    <option value="agro" <?if($PROD['comp_requise']=='agro'){?> SELECTED <? } ?>>Agronomie</option>
+                    <option value="armb" <?if($PROD['comp_requise']=='armb'){?> SELECTED <? } ?>>Armes blanches</option>
+                    <option value="armc" <?if($PROD['comp_requise']=='armc'){?> SELECTED <? } ?>>Corps à corps</option>
+                    <option value="armf" <?if($PROD['comp_requise']=='armf'){?> SELECTED <? } ?>>Armes à feu</option>
+                    <option value="arml" <?if($PROD['comp_requise']=='arml'){?> SELECTED <? } ?>>Armes lourdes</option>
+                    <option value="armu" <?if($PROD['comp_requise']=='armu'){?> SELECTED <? } ?>>Armurier</option>
+                    <option value="arti" <?if($PROD['comp_requise']=='arti'){?> SELECTED <? } ?>>Artisanat</option>
+                    <option value="athl" <?if($PROD['comp_requise']=='athl'){?> SELECTED <? } ?>>Athlétisme</option>
+                    <option value="chim" <?if($PROD['comp_requise']=='chim'){?> SELECTED <? } ?>>Chimie</option>
+                    <option value="croc" <?if($PROD['comp_requise']=='croc'){?> SELECTED <? } ?>>Crochetage</option>
+                    <option value="cybr" <?if($PROD['comp_requise']=='cybr'){?> SELECTED <? } ?>>Cybernétique</option>
+                    <option value="drsg" <?if($PROD['comp_requise']=='drsg'){?> SELECTED <? } ?>>Dressage</option>
+                    <option value="elec" <?if($PROD['comp_requise']=='elec'){?> SELECTED <? } ?>>Electronique</option>
+                    <option value="ensg" <?if($PROD['comp_requise']=='ensg'){?> SELECTED <? } ?>>Enseignement</option>
+                    <option value="esqv" <?if($PROD['comp_requise']=='esqv'){?> SELECTED <? } ?>>Esquive</option>
+                    <option value="expl" <?if($PROD['comp_requise']=='expl'){?> SELECTED <? } ?>>Explosifs</option>
+                    <option value="forg" <?if($PROD['comp_requise']=='forg'){?> SELECTED <? } ?>>Forge</option>
+                    <option value="frtv" <?if($PROD['comp_requise']=='frtv'){?> SELECTED <? } ?>>Furtivité</option>
+                    <option value="info" <?if($PROD['comp_requise']=='info'){?> SELECTED <? } ?>>Informatique</option>
+                    <option value="lncr" <?if($PROD['comp_requise']=='lncr'){?> SELECTED <? } ?>>Lancer</option>
+                    <option value="meca" <?if($PROD['comp_requise']=='meca'){?> SELECTED <? } ?>>Mécanique</option>
+                    <option value="meds" <?if($PROD['comp_requise']=='meds'){?> SELECTED <? } ?>>Medecine</option>
+                    <option value="mrch" <?if($PROD['comp_requise']=='mrch'){?> SELECTED <? } ?>>Marchandage</option>
+                    <option value="pckp" <?if($PROD['comp_requise']=='pckp'){?> SELECTED <? } ?>>Pickpocket</option>
+                    <option value="pltg" <?if($PROD['comp_requise']=='pltg'){?> SELECTED <? } ?>>Pilotage</option>
+                    <option value="psyc" <?if($PROD['comp_requise']=='psyc'){?> SELECTED <? } ?>>Psychologie</option>              
+                </select>
+			</td>
+		</tr>
+		<tr>
+			<td class="name">Minimum de compétence requise</td>
+			<td class="value">
+				<input type="text" class="text" name="comp_lvl" value="<?=$PROD['comp_lvl'];?>" size="5" />
+			</td>
+		</tr>
+		<tr>
+			<td class="name">XP gagné sur la compétence</td>
+			<td class="value">
+				<input type="text" class="text" name="comp_xp" value="<?=$PROD['comp_xp'];?>" size="5" /> XP
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="send">
+				<input type="submit" class="button" name="save" value="Enregistrer" />
+			</td>
+		</tr>
+	</table>
+</form>

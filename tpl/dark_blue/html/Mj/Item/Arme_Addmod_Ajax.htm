@@ -1,0 +1,7 @@
+<select name="<?=$ARMES_IDX;?>_armeid_add">
+	<option value="">- aucune -</option>
+	<?php foreach($ARMES as $arme){ ?>
+		<option value="<?=$arme['db_id'];?>"><?=$arme['db_nom'];?></option>
+	<?php } ?>
+</select>
+<div id="add_arme_<?=$ARMES_IDX;?>"></div>

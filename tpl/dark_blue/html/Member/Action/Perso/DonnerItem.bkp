@@ -1,0 +1,90 @@
+<script type="text/javascript">
+//<!--
+	$('perso_pa').innerHTML="<?=$PA;?>";
+	$('perso_pr').innerHTML="<?=$PR;?>";
+//-->
+</script>
+<br />
+<form id="action_donnerItem" method="post" action="?popup=1&m=Action_Perso_Donneritem2" onsubmit="return ajaxSubmitForm(this);">
+<table class="tbl_center" width="95%">
+<tr>
+	<td class="title" style="width:50%;">Inventaire personnel</td>
+	<td class="title">Donner &agrave;</td>
+</tr>
+<tr>
+	<td class="value" style="text-align:left;vertical-align:top;">
+		<table>
+		<tr>
+			<td class="name" width="60">&nbsp;</td>
+			<td class="name">Nom</td>
+			<td class="name">Qte</td>
+			<td class="name">PR</td>
+		</tr>
+		<?php  if (isset($INV_PERSO)){
+			foreach($INV_PERSO as $item){?>
+				<tr>
+					<td class="value">
+						<input type="text" class="text" name="<?=$item->getInvId();?>_qte" value="0" style="width:25px;" />/<?=$item->getQte();?>
+					</td>
+					<td class="value">
+					<span class="fakelink" id="item_<?=$item->getInvId();?>" onmousemove="infobulle(this, event);"><?=$item->getNom();?><?php if($item->isEquip()){?> (&eacute;quip&eacute;(e))<?php }?></span>
+					<div id="ib_item_<?=$item->getInvId();?>" style="width:300px;" class="infobulle">
+						<img src="<?=$SKIN_VIRTUAL_PATH;?>../_common/items/<?=$item->getImage();?>" align="left" style="border:0px;margin:3px;" />
+						<?=$item->getDescription();?>
+					</div>
+                    <!--<?=$item->getNom();?><?php if($item->isEquip()){?> (&eacute;quip&eacute;(e))<?php }?>-->
+                    </td>
+					<td class="value"><?=$item->getQte();?></td>
+					<td class="value"><?=$item->getPr();?></td>
+				</tr>
+			<?php  } 
+		}
+		else
+		{
+			?>
+			<tr>
+				<td colspan="2">
+					<i>- vous n'avez aucun item en inventaire -</i>
+				</td>
+			</tr>
+			<?php
+		}
+		?>
+		</table>
+	</td>
+	<td class="value" style="text-align:left;vertical-align:top;">
+		<?php 
+		if (isset($LIST_PERSO)){
+			foreach($LIST_PERSO as $perso){ ?>
+				<input type="radio" name="toPersoId" value="<?=$perso->getId();?>" />
+				<?php if ($perso->getSexe()=='m'){?>
+					<span id="perso_<?=$perso->getId();?>" class="txtStyle_homme" onmousemove="infobulle(this, event);">
+				<?php }else{?>
+					<span id="perso_<?=$perso->getId();?>" class="txtStyle_femme" onmousemove="infobulle(this, event);">
+				<?php }?>
+					<?=$perso->getNom();?>
+				</span>
+				<div id="ib_perso_<?=$perso->getId();?>" class="infobulle" style="width:300px;">
+					<div class="title">Infos</div>
+					<?php if ($perso->getAvatar()!='') {?>
+						<img class="imgbg" align="left" src="<?=$perso->getAvatar();?>" />
+					<?php  } ?>
+					<?=$perso->getDescription();?>
+				</div>
+				<br />
+		<?php 
+			}
+		}else{
+		?>
+			<i>-personne-</i>
+		<?php 
+		}
+		?>
+	</td>
+</tr>
+<tr>
+	<td class="send" colspan="2" style="width:30px;">
+		<input type="submit" class="button" value="Donner" />
+	</td>
+</tr>
+</table>

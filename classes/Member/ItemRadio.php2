@@ -1,0 +1,234 @@
+<?Php
+/** Gestion des Talkie Walkies
+*
+* @package Member
+*/
+
+class Member_ItemRadio extends Member_Item {
+	private $frequence;
+	private $clef;
+	private $silenceCapable;
+	private $cryptCapable;
+	
+	function __construct(&$arr){
+		parent::__construct($arr);
+	
+	$this-> frequence = $arr['inv_notel'];
+	
+	$this-> clef = $arr['inv_nip'];
+	
+	$this-> silenceCapable = $arr['db_afficheur'];
+	
+	$this-> cryptCapable = $arr['db_anonyme'];
+	
+	}
+	/** Retourne la fréquence sur laquelle est réglée la radio
+	
+	* @return string
+	
+	*/	
+	
+	public function getFrequence()      { return $this->frequence ;}
+	
+	/** Retourne la clef de cryptage de la radio
+	
+	* @return string
+	
+	*/		
+	
+	public function getClef()           { return $this->clef ;} 	
+	
+	/** Retourne True si la radio possède un dispositi silencieux
+	
+	* @return bool
+	
+	*/		
+	
+	public function getSilenceCapable() { return ($this->silenceCapable==1) ? false : true ;} 	
+	
+	/** Retourne True si la radio peut crypter les messages
+	
+	* @return string
+	
+	*/		
+	
+	public function getCryptCapable()   { return ($this->cryptCapable==1) ? true : false ;} 
+	
+	/** Retourne True si une fréquence est réglé ( et que donc on peut parler)
+	
+	* @return bool
+	
+	*/		
+	
+	public function getCanTalk()		{ return(($this->frequence == 0) || ($this->frequence == "")) ? false : true ;}
+	
+	/** Retourne le groupe affichable de l'item (pour l'affichage)
+	* @return string
+	*/	
+	public function getGroup()			{ return 'Électronique'; }
+	
+	/** Retourne le groupe (nom technique) de l'item (pour l'affichage)
+	* @return string
+	*/	
+	public function getGroupTech()		{ return 'electronique'; }
+	
+	/** Retourne le type affichable de l'item (pour l'affichage)
+	* @return string
+	*/	
+	public function getType()			{ return 'Radio (Talkie Walkie)'; }
+	
+	/** Retourne le type (nom technique) de l'item (pour l'affichage)
+	* @return string
+	*/	
+	public function getTypeTech()		{ return 'talkiewalkie'; }
+	
+	/** Met a jour la Clef de cryptage
+	
+	*@return string
+	
+	*/
+	
+	public function majClef(&$db,&$clef)			{
+	
+		$sqlMaj = "UPDATE ".DB_PREFIX."item_inv SET inv_nip='".$clef."' WHERE inv_id='".$this->getInvId()."' ";
+
+		$resultSqlMaj = $db->query($sqlMaj,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+	
+	}
+	
+	/** Met à jour la fréquence de la radio
+	
+	*@return string
+	
+	*/
+	
+	public function majFrequence(&$db,&$frequence)	{
+	
+	$sqlMaj = "UPDATE ".DB_PREFIX."item_inv SET inv_notel='".$frequence."' WHERE inv_id='".$this->getInvId()."'";
+	
+	$resultSqlMaj = $db->query($sqlMaj,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__); 
+	
+	
+	}
+	
+	/** Envoie un message radio
+	
+	*@return string
+	
+	*/
+	
+	public function utiliser(&$db,&$perso,&$message){ 
+	
+		/*
+		NOTE FMAZ:
+		Bon, j'ai essayé de comprendre, mais je pige pas trop la logique et pourquoi il y a 3 appels à Member_He, il devrais juste y en avoir 2:
+		(Bon, 2 depuis le changement à Member_He::add que je viens juste de finir, mais je veux pas tout changer ton propre code.. alors je vais t'expliquer la facon que moi j'aurais faite)
+		
+		#1: Celui qui ajoute le message officiel de la radio aux gens sur la fréquence du message:
+		//a) Trouver tous les perso possédant un item Talkiewalkie sur la fréquence, placer leurs ID dans une liste (array)
+		//b) Faire l'ajout du message dans le HE avec un appel qui ressemble à:
+		Member_He::add($db, $perso->getId(), $arrDestinatairesId, 'Radio', $message,HE_UNIQUEMENT_MOI, HE_UNIQUEMENT_MOI);
+		
+		#2: Ajouter le message à tous ceux présent dans le lieu de chaque personne qui a recu le message
+		//a) Vérifier si la radio à une oreillette, si ce n'est pas le cas, poursuivre
+		//b) foreach($arrDestinatairesId as $unDestinaireId) {
+		//c) Faire une liste (Array) au format: 
+		       $arrDestinataireSelonLieux = Array(
+							'A.douannes' => Array (
+								'from' => Array( 263, 15 ),
+								'to'	=> Array( 193, 35, 335, 169 )
+							),
+							'Sud' => Array (
+								'from' => Array( 87 ),
+								'to'	=> Array( 642, 11 )
+							),
+						);
+		//d) Ajouter les messages dans les HE des personnes concernés
+			//Le tableau est utilisable comme ceci:
+			foreach($arrDestinataireSelonLieux as $arrDestinataireDansLieu){
+				Member_He::add($db, $arrDestinataireDansLieu['from'], $arrDestinataireDansLieu['to'], 'Radio', $message,HE_AUCUN, HE_TOUS);
+			}
+				
+		Résumé de l'étape 2:
+		Ca permet qu'une personne dans un lieu entende le message et voit qu'il y avait 1 ou 2 ou 3 personnes qui avaient le TalkieWalkie (source du message sonore)
+		Un ajout de message pour les destinataire officiels
+		Un ajout de message par lieu pour tout ceux qui entendent sans avoir une radio qui capte à cette fréquence
+		
+		Ps.: Pour le tableau, il faut faire attention de ne pas placer dans les destinataire ceux qui possèdent une radio. Il faut aussi faire attention de bien vérifier si un lieu est déjà présent dans le tableau avant d'en ajouter un nouveau ( la fonction PHP array_keys est utile).
+		*/
+	
+		if($this->getCanTalk() == false)
+			return fctErrorMSG('Aucune fréquence n\'a été réglée vous ne pouvez pas parler.', '?popup=1&m=Action_Radios');
+			
+		//Mode conversation non cryptée
+		echo $this->getCryptCapable()."/".$this->getClef();
+		if(($this->getCryptCapable() == false) || ($this->getClef() == null) || ($this->getClef() == 0))
+		{
+			//Recup des talkies sur la même frequence que celui de l'utilisateur
+			$queryGensFrequence = "SELECT DISTINCT *
+	                              FROM ".DB_PREFIX."item_inv 
+	                              LEFT JOIN " . DB_PREFIX . "item_db ON (db_id=inv_dbid) 
+								  LEFT JOIN " . DB_PREFIX . "perso ON (id=inv_persoid) 
+	                              WHERE inv_notel=" .$this->getFrequence(). " AND db_type='talkiewalkie' AND inv_id!=".$this->getInvId()." "; 
+			
+			echo $queryGensFrequence."<br><br><br><br><br>";
+		
+			$resultGensFrequence = $db->query($queryGensFrequence ,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+
+			$enteteDestinataire = "Vous entendez quelqu'un parler depuis la radio branchée sur la fréquence: ".$this->getFrequence();
+
+			while($donneesGensFrequence = mysql_fetch_assoc($resultGensFrequence))
+			{
+				$destinataire = new Member_Perso($db,$donneesGensFrequence,true,false,$perso->getId());
+				$radioDestinataire = new Member_ItemRadio($donneesGensFrequence);
+				
+				$lieu = $destinataire->getlieu();//Lieu où est le(s) destinataire(s)
+				
+				if($destinataire->getId() != null)
+				{
+					echo $destinataire->getId()."<br>";
+					$idMessDestinataire = Member_He::add($db, $perso->getId(), $destinataire->getId(), 'Radio', $enteteDestinataire. "<hr />" . $message,false,true);
+					
+					//Si le destinataire n'a pas d'oreillettes, alors on fait parvenir le message aux personnes présentes dans le lieu
+					if($radioDestinataire->getSilenceCapable() == false)
+					{
+						$i=0;$e=0;
+						$arrIdPerso = array();
+						while( $arrPerso = $lieu->getPerso($db, $destinataire, $i++)){
+							if( ($arrPerso->getId() != $destinataire->getId()) && ($arrPerso->getId() != $perso->getId()) )
+							{
+								$arrIdPerso[$e++] = $arrPerso->getId();
+							}
+						}
+							
+							$enteteMessageGensAutour = 'Vous entendez une radio grésiller un court instant, dans le lieu où vous vous trouvez, avant de parvenir à entendre ce qui s\'échappe du haut parleur de celle-ci.';
+							$idMessGensAutour = Member_He::add($db, $perso->getId(), $arrIdPerso , 'Radio', $enteteMessageGensAutour. "<hr />" . $message,false,true);
+						
+					
+					
+					
+					}
+				}
+			}
+
+
+		
+			$idMessCopieHE= Member_He::add($db, "Copie/Radio", $perso->getId(), "Copie/Radio",$message,false,true);
+		
+		}
+		//Mode Conversation Cryptée
+		else
+		{
+		
+			echo "part 2";
+
+		}
+	
+	
+	
+	
+	
+	}
+	
+}
+?>

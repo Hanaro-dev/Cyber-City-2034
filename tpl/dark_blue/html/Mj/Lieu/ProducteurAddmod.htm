@@ -1,0 +1,146 @@
+<script type="text/javascript">
+//<!--
+Changer_Lieu = function(modid)
+{
+	var lieu=prompt('Lieu ? (Nom technique)','');
+	if(lieu!=""){
+		var myAjax = new Ajax.Updater(
+			'div_lieu', 
+			'?mj=Search&popup=1', 
+			{
+				method: 'post', 
+				parameters: 'searchWhat=selectLieu&search='+lieu+'&modid='+modid
+			});
+	}
+}
+Changer_Lieu2 = function(id, lieu, modid)
+{
+	$('div_lieu').innerHTML = lieu+' (<a href="#" onclick="Changer_Lieu('+modid+');">Changer</a>)\n<input type="hidden" name="lieuId" value="'+id+'" />';
+	Changer_LieuMenu(lieu, modid);
+}
+
+Changer_LieuMenu = function(lieu, modid)
+{
+	var myAjax = new Ajax.Updater(
+		'div_lieumenu', 
+		'?mj=Search&popup=1', 
+		{
+			method: 'post', 
+			parameters: 'searchWhat=selectLieuMenu&search='+lieu+'&modid='+modid
+		});
+}
+//-->
+</script>
+
+<br />
+<a href="?mj=Lieu_Producteur">&lt;&lt; Retour à la liste des producteurs</a><br />
+<form method="post" name="form1" action="?mj=Lieu_Producteur<?=$SUBMITNAME;?>">
+	<table align="center">
+		<tr>
+			<td class="title" colspan="2"><?=$ACTIONTYPETXT;?> un producteur</td>
+		</tr>
+		<?php if( $SHOWID == true ){ ?>
+			<tr>
+				<td class="name">ID du producteur</td>
+				<td class="value"><input type="hidden" name="id" value="<?=$PROD['id'];?>" /><?=$PROD['id'];?></td>
+			</tr>
+		<?php } ?>
+		
+		
+		<tr>
+			<td class="name">On peut travailler à la production à partir de ce lieu</td>
+			<td class="value">
+				<div id="div_lieu" style="height:6em;overflow:auto;">
+					<?=$PROD['nom_technique'];?> (<a href="#" onclick="Changer_Lieu(<?=$PROD['lieuMenuId'];?>);">Changer</a>)
+					<input type="hidden" name="lieuId" value="<?=$PROD['lieuId'];?>" />
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="name">A quelle action de ce lieu associe-t-on le module ?</td>
+			<td class="value">
+				<div id="div_lieumenu" style="height:6em;overflow:auto;"></div>
+                <?php if( $PROD['lieuId'] ){ ?>
+                    <script>
+                        Changer_LieuMenu("<?=$PROD['nom_technique'];?>", <?=$PROD['lieuMenuId'];?>);
+                    </script>
+                <?php } ?>
+			</td>
+		</tr>
+		<tr>
+			<td class="name">Cash</td>
+			<td class="value">
+				<input type="text" class="text" name="cash" value="<?=$PROD['cash'];?>" size="5" /> <?=GAME_DEVISE;?>
+			</td>
+		</tr>
+		<tr>
+			<td class="name">1 PA donne</td>
+			<td class="value">
+				<input type="text" class="text" name="pa_cash_ratio" value="<?=$PROD['pa_cash_ratio'];?>" size="5" />
+			</td>
+		</tr>
+		<tr>
+			<td class="name">PA en banque (nombre de PA qui ont été travaillés)</td>
+			<td class="value">
+				<input type="text" class="text" name="total_pa" value="<?=$PROD['total_pa'];?>" size="5" /> PA
+			</td>
+		</tr>
+		<tr>
+			<td class="name">PA requis pour lancer une production</td>
+			<td class="value">
+				<input type="text" class="text" name="pa_needed" value="<?=$PROD['pa_needed'];?>" size="5" /> PA
+			</td>
+		</tr>
+		<tr>
+			<td class="name">Compétence requise pour la production</td>
+			<td class="value">
+                <select name="comp_requise" id="comp_requise">
+                    <option value="" <?php if($PROD['comp_requise']==''){?> SELECTED <?php } ?>>Aucune</option>
+                    <option value="agro" <?php if($PROD['comp_requise']=='agro'){?> SELECTED <?php } ?>>Agronomie</option>
+                    <option value="armb" <?php if($PROD['comp_requise']=='armb'){?> SELECTED <?php } ?>>Armes blanches</option>
+                    <option value="armc" <?php if($PROD['comp_requise']=='armc'){?> SELECTED <?php } ?>>Corps à corps</option>
+                    <option value="armf" <?php if($PROD['comp_requise']=='armf'){?> SELECTED <?php } ?>>Armes à feu</option>
+                    <option value="arml" <?php if($PROD['comp_requise']=='arml'){?> SELECTED <?php } ?>>Armes lourdes</option>
+                    <option value="armu" <?php if($PROD['comp_requise']=='armu'){?> SELECTED <?php } ?>>Armurier</option>
+                    <option value="arti" <?php if($PROD['comp_requise']=='arti'){?> SELECTED <?php } ?>>Artisanat</option>
+                    <option value="athl" <?php if($PROD['comp_requise']=='athl'){?> SELECTED <?php } ?>>Athlétisme</option>
+                    <option value="chim" <?php if($PROD['comp_requise']=='chim'){?> SELECTED <?php } ?>>Chimie</option>
+                    <option value="croc" <?php if($PROD['comp_requise']=='croc'){?> SELECTED <?php } ?>>Crochetage</option>
+                    <option value="cybr" <?php if($PROD['comp_requise']=='cybr'){?> SELECTED <?php } ?>>Cybernétique</option>
+                    <option value="drsg" <?php if($PROD['comp_requise']=='drsg'){?> SELECTED <?php } ?>>Dressage</option>
+                    <option value="elec" <?php if($PROD['comp_requise']=='elec'){?> SELECTED <?php } ?>>Electronique</option>
+                    <option value="ensg" <?php if($PROD['comp_requise']=='ensg'){?> SELECTED <?php } ?>>Enseignement</option>
+                    <option value="esqv" <?php if($PROD['comp_requise']=='esqv'){?> SELECTED <?php } ?>>Esquive</option>
+                    <option value="expl" <?php if($PROD['comp_requise']=='expl'){?> SELECTED <?php } ?>>Explosifs</option>
+                    <option value="forg" <?php if($PROD['comp_requise']=='forg'){?> SELECTED <?php } ?>>Forge</option>
+                    <option value="frtv" <?php if($PROD['comp_requise']=='frtv'){?> SELECTED <?php } ?>>Furtivité</option>
+                    <option value="info" <?php if($PROD['comp_requise']=='info'){?> SELECTED <?php } ?>>Informatique</option>
+                    <option value="lncr" <?php if($PROD['comp_requise']=='lncr'){?> SELECTED <?php } ?>>Lancer</option>
+                    <option value="meca" <?php if($PROD['comp_requise']=='meca'){?> SELECTED <?php } ?>>Mécanique</option>
+                    <option value="meds" <?php if($PROD['comp_requise']=='meds'){?> SELECTED <?php } ?>>Medecine</option>
+                    <option value="mrch" <?php if($PROD['comp_requise']=='mrch'){?> SELECTED <?php } ?>>Marchandage</option>
+                    <option value="pckp" <?php if($PROD['comp_requise']=='pckp'){?> SELECTED <?php } ?>>Pickpocket</option>
+                    <option value="pltg" <?php if($PROD['comp_requise']=='pltg'){?> SELECTED <?php } ?>>Pilotage</option>
+                    <option value="psyc" <?php if($PROD['comp_requise']=='psyc'){?> SELECTED <?php } ?>>Psychologie</option>              
+                </select>
+			</td>
+		</tr>
+		<tr>
+			<td class="name">Minimum de compétence requise</td>
+			<td class="value">
+				<input type="text" class="text" name="comp_lvl" value="<?=$PROD['comp_lvl'];?>" size="5" />
+			</td>
+		</tr>
+		<tr>
+			<td class="name">XP gagné sur la compétence</td>
+			<td class="value">
+				<input type="text" class="text" name="comp_xp" value="<?=$PROD['comp_xp'];?>" size="5" /> XP
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="send">
+				<input type="submit" class="button" name="save" value="Enregistrer" />
+			</td>
+		</tr>
+	</table>
+</form>

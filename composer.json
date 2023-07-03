@@ -1,0 +1,12 @@
+{
+    "name": "balam/cc4",
+    "authors": [
+        {
+            "name": "BalamWeb",
+            "email": "balam.web@gmail.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "~2.0"
+    }
+}

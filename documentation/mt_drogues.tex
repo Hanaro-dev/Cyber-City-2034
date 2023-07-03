@@ -1,0 +1,97 @@
+\section{Les drogues}
+
+Les drogues sont des items consommables permettant aux joueurs de modifier leurs caractéristiques pendant une durée limitée. Le type  \emph{drogue} représente la drogue en elle même alors que le type \emph{substance de base (substance)} permet de créer des ingrédients pour permettre aux joueurs de fabriquer leurs propres drogues.
+
+Avec le type \emph{nourriture}, les drogues sont les seuls items consommables dans le jeu. La drogue est aussi le seul moyen au joueur de modifier ses caractéristiques au delà du maximum (par exemple plus de 99 PA ou 99 PV).
+
+Chaque item \emph{drogue} ou \emph{substance de base} contient les paramètres suivants ayant un lien direct avec leur effets : 
+\begin{itemize}
+\item Effet Boost PA.
+\item Effet Boost PV.
+\item Effet sur AGI.
+\item Effet sur DEX.
+\item Effet sur PER.
+\item Effet sur FOR.
+\item Effet sur INT.
+\item Durée des effets(en remises).
+\item Effet secondaire, perte de PA (fatigue subite).
+\item Effet secondaire, perte de PV (dommage sur la santée).
+\end{itemize}
+
+\subsection{Utilisation}
+
+Il existe deux actions principales liées aux drogues : la consommation et la fabrication.
+
+\subsubsection{Consommation}
+
+La consommation de drogue fonctionne de la même manière que la consommation de nourriture. Depuis l'inventaire en sélectionnant l'item de type \emph{drogue}, l'option \emph{consommer} est disponible. Dès lors que l'item est consommé, il n'est alors plus visible dans l'inventaire et les modifications prennent effet immédiatement.
+
+La durée de l'effet se compte en remises. Elle est directement liée à la caractéristique de l'item \emph{Durée des effets}. Au moment de la consommation, le moteur calcul aléatoirement le nombre de remises pendant lequel l'effet va durer. Ce nombre varie de \emph{Durée des effets} - 1 à \emph{Durée des effets} + 1.
+
+De manière immédiate, le personnage reçoit aussi un bonus ou malus en PA et PV correspondant exactement aux caractéristiques \emph{Effet Boost PA} et \emph{Effet Boost PV}. Ce bonus permet alors au joueur de dépasser le maximum autorisé.
+
+Pendant toute la durée des effets, le personnage bénéficie d'un bonus ou malus d'XP sur ses caractéristiques en fonctions des effets de la drogue. Les effets de la drogues sur les caractéristiques sont exprimés en pourcentage (positif pour un bonus, négatif pour un malus), par exemple, si le personnage a 100 XP en \emph{force} et qu'il consomme une drogue ayant 50\% dans sa caractéristique \emph{Effet sur FOR}, le personnage a donc 150 XP (100 + 50) pendant la durée des effets. Si le personnage consomme plusieurs drogues, les effets sont cumulatif, les effets secondaires aussi.
+
+Lorsqu'un personnage a consommé des drogues et que ces caractéristiques sont modifié, les modifications ne sont pas directement visibles sur les caractéristiques dans la fiche de personnage. Par contre, les bonus sur les compétences prennent en compte les modifications provenant des effets des drogues consommées.
+
+Lorsqu'un personnage a consommé une drogue, à chacune de ses remises, la durer de l'effet est décrémentée de 1. Lorsqu'elle a atteint 0, l'effet s'arrête. Les bonus sur les caractéristiques s'annulent et le personnage subit une pénalité en PA et PV correspondant aux caractéristiques \emph{Effet secondaire, perte de PA} et \emph{Effet secondaire, perte de PV}. Cette perte peut amener le joueur à avoir des PA ou des PV négatifs. Dans le deuxième cas, le personnage peut donc mourir d'une trop grosse consommation de drogue. Il semble d'ailleurs logique que dans la plupart des cas les effets secondaires soient plus importants que les effets de boost.
+
+La consommation d'une drogue coute 2 PA.
+
+\subsubsection{Fabrication}
+
+Bienque les MJ puissent mettre en circulation dans le jeu des drogues prêtes à être consommées. Un des intérêt du système est de permettre aux joueurs de fabriquer leurs propres drogues.
+
+La fabrication se fait par l'intermédiaire du module \emph{LaboDrogue} associable à un lieu et permet de créer un item de type \emph{drogue} à partir d'items de type \emph{substance de base}. Le personnage utilisant le labo choisit les substances de base et leurs nombres qu'il souhaite utiliser pour la fabrication et génère alors, sous condition de réussite, un nombre de cachet de drogue qui sont transféré directement dans l'inventaire. Les cachet sont générés à partir de l'item \emph{Drogue} (ID = 2). Cet item ne doit donc pas être supprimé.
+
+L'action coute 50 PA et nécessite d'utiliser au minimum 10 items de type \emph{substance de base}. En fonction du nombre d'items utilisés pour la fabrication, le moteur calcul un taux de perte pendant la fabrication. 
+
+\bigskip
+
+\begin{tabular}{|c|c|}
+	\hline
+	Nombre d'item & Pourcentage de perte \\
+	\hline
+	10 à 24 & 30\% à 60\% \\
+	25 à 49 & 20\% à 40\% \\
+	50 à 99 & 10\% à 25\% \\
+	100 à 499 & 8\% à 15\% \\
+	500 et + & 5\% à 10\% \\
+	\hline
+\end{tabular}
+
+\bigskip
+
+Il en résulte alors le nombre de cacher qui sera créer en cas de réussite : nombre d'items créés = nombre d'items utilisés - nombre d'items utilisés x pourcentage / 100 (arrondi à l'entier inférieur).
+
+Pour déterminer si la fabrication est réussite ou non, le moteur effectue un test sur la compétence \emph{Chimie} du personnage.
+
+En cas de réussite, chaque cachet créé lors de l'action aura les mêmes caractéristiques. Chaque substance de base a ses propres caractéristiques. Lors de la fabrication, le moteur fait la moyenne entre chaque substance de base utilisés en prenant en compte le nombre utilisé pour chacune (ce nombre agit alors comme un coefficient dans le calcul de la moyenne) pour chacune des caractéristiques et déduit ainsi les caractéristiques finales de la drogue créée. L'intérêt est alors d'associer les substance afin de multiplier les bonus tout en minimisant les malus. Le joueur ne connaissant pas les valeurs des caractéristiques des substances de base, il ne pourra se fier qu'au retour de la consommation de la drogue pour améliorer ses mélanges. Le gain d'XP est de : \emph{Chimie} + [1 à 3], \emph{INT} + 1, \emph{DEX} + 1, \emph{PER} - 2.
+
+En cas d'échec, la drogue n'est pas créée et les substances utilisées sont perdues. Le gain d'XP est de : \emph{Chimie} + [1 à 3], \emph{INT} + 1, \emph{DEX} + 1, \emph{PER} - 2.
+
+\subsection{Gestion technique}
+
+\subsubsection{Gestion des items}
+
+Les items liés aux drogues sont paramétrables à partir du menu \emph{Gestion des drogues} dans le panneau des MJ. La liste de tous les modèles d'item est accessible et il est possible de les supprimer, les modifier ou d'en créer des nouveaux.
+
+\subsubsection{Les drogues dans l'inventaire}
+
+Les drogues consommées ou juste détenues par un personnage sont visible depuis son inventaire dans le panneau MJ. En cliquant sur un item de type \emph{drogue} ou \emph{substance} depuis l'inventaire, il est possible de modifier les caractéristiques de cet item sans toucher à celle des autres. Il est par exemple possible de modifier les caractéristiques d'une drogue déjà consommée.
+
+\subsubsection{Le Labo de drogue}
+
+Le labo de drogue est un module de lieu. Il peut être ajouté à un lieu comme n'importe quel module et ne nécessite pas de paramétrage particulier. Une fois ajouté, il est accessible par tous les personnage se trouvant dans le lieu.
+
+\subsection{Tableaux récapitulatif}
+
+\begin{tabular}{|c|c|}
+	\hline
+	\multicolumn{2}{|c|}{Drogues} \\
+	\hline
+	Coût consommation & 2 PA \\
+	Coût fabrication & 50 PA \\
+	Gain XP (Réussite et échec) & \emph{CHIM} + [1 - 3] \emph{INT} + 1 \emph{DEX} + 1 \emph{PER - 2} \\
+	\hline
+\end{tabular}

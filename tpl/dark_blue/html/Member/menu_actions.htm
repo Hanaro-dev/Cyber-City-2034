@@ -1,0 +1,16 @@
+<?php
+foreach ($MENU_ITEMS as $element){
+	if ($element['url']=='-'){
+		?>
+		<div class="title"><?=$element['txt'];?></div>
+		<?php
+	}else{
+		?>
+		<a class="menu_action_item" href="#" onclick="actionLink('Action_<?=$element['url'];?>');return false;"><?=$element['txt'];?></a>
+		<?php
+	} 
+}
+?>
+<a class="menu_action_PPA" href="#" onclick="actionLink('ContactMj');return false;">PPA / Contacter un MJ</a>
+
+

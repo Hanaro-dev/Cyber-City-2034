@@ -1,0 +1,33 @@
+<br />
+<table class="tbl_center">
+<tr>
+	<td class="title" colspan="2">Résultat de l'examen</td>
+</tr>
+</table>
+
+<br />
+<table class="tbl_center">
+<tr>
+<?php
+foreach($SECTIONS as $section){
+	?>
+	<td class="value">
+		Section <?=$section['section'];?>
+		<br /><span style="font-size:18pt;"><?=$section['score'];?>%</span>
+		<br /><span style="font-size:10pt;"><?php if($section['statut']){ echo 'RÉUSSITE'; }else{ echo 'ÉCHEC'; }?></span>
+	</td>
+	<?php
+}
+?>
+</tr>
+</table>
+
+<br />
+<table class="tbl_center">
+<tr>
+	<td class="value">
+		<span style="font-size:24pt;"><?=$SCORETOT;?>%</span>
+		<br /><span style="font-size:16pt;"><?php if($REUSSITE){ echo 'RÉUSSITE'; }else{ echo 'ÉCHEC'; }?></span>
+	</td>
+</tr>
+</table>

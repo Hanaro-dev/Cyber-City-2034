@@ -1,0 +1,34 @@
+<form method="post" id="form1" action="?m=Config_Affichage2">
+<table class="center">
+<tr>
+	<td class="title" colspan="2">Configuration de l'affichage</td>
+</tr>
+<tr>
+	<td class="name" style="width:30%;">Inteface du site:</td>
+	<td class="valueleft">
+		<select name="skinname" size="1">
+		<? foreach($SKINS as $skin){ ?>
+			<option value="<?=$skin["name"];?>" <?if(isset($skin["set"])){?> SELECTED<?}?>><?=$skin["title"];?></option>
+		<? } ?>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td class="name">Items par page du HE</td>
+	<td class="valueleft">
+		<select name="heitems" size="1">
+			<? foreach($HEITEMS as $item){ ?>
+				<option value="<?=$item["value"];?>" <?if(isset($item["set"])){?> SELECTED<?}?>><?=$item["value"];?></option>
+			<? } ?>
+		</select>
+	</td>
+</tr>
+
+
+<tr>
+	<td class="send" colspan="2">
+		<input class="button" type="submit" name="save" value="Sauvegarder" />
+	</td>
+</tr>
+</table>
+</form>

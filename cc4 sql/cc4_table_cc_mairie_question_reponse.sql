@@ -1,0 +1,95 @@
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `cc_mairie_question_reponse`
+--
+
+DROP TABLE IF EXISTS `cc_mairie_question_reponse`;
+CREATE TABLE `cc_mairie_question_reponse` (
+  `questionId` int(12) NOT NULL,
+  `reponse_tech` varchar(1) NOT NULL,
+  `reponse` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Déchargement des données de la table `cc_mairie_question_reponse`
+--
+
+INSERT INTO `cc_mairie_question_reponse` (`questionId`, `reponse_tech`, `reponse`) VALUES
+(1, 'a', 'Le secteur de l\'import/export'),
+(1, 'b', 'Le camp des réfugiés'),
+(1, 'c', 'Le Centre Ville'),
+(2, 'a', 'A justifier de son identité.'),
+(2, 'b', 'A obtenir un autographe du MJ le plus sexy du jeu (moi).'),
+(2, 'c', 'A se faire dépouiller par le premier sauvage mal luné.'),
+(3, 'a', 'Celui du Centre-Ville'),
+(3, 'b', 'Celui du Manoir.'),
+(3, 'c', 'Celui de l\'extérieur.'),
+(4, 'a', 'Liberté, Egalité, Fraternité.'),
+(4, 'b', 'Riri, Fifi et Loulou.'),
+(4, 'c', 'Les flics, les extérieurs, la pègre.'),
+(5, 'a', 'Ils n\'ont pas droit aux films X'),
+(5, 'b', 'Ils peuvent quand même passer leur permis de conduire'),
+(5, 'c', 'Ils ont moins de Point de Vie (PV) max que les autres'),
+(6, 'a', 'On peut devenir propriétaire contre une certaine somme d\'argent.'),
+(6, 'b', 'On obtient protection et aide à la survie.'),
+(6, 'c', 'On peut revendre plus facilement nos pyjamas des douanes.'),
+(7, 'a', 'Bien sûr, c\'est vital pour défendre sa vie.'),
+(7, 'b', 'Non, aucune arme n\'est autorisée.'),
+(7, 'c', 'Les armes à feu, non, mais les armes blanches sont accessibles aux citoyens violonistes, dentelliers ou thanatopracteurs uniquement.'),
+(8, 'a', 'd\'un RP de l\'attaquant - message décrivant l\'évènement via l\'action \"parler\".'),
+(8, 'b', 'de la fuite de l\'attaquant s\'il le souhaite, sans RP préalable.'),
+(8, 'c', 'de l\'attente de la réaction de la victime avant tout nouveau RP.'),
+(9, 'a', 'EJ est la devise monétaire et HJ les points d\'énergie.'),
+(9, 'b', 'EJ désigne quelque chose en jeu, et HJ quelque chose hors-jeu.'),
+(9, 'c', 'EJ désigne un état inconscient, et HJ un état mort.'),
+(10, 'a', '[HJ: message]'),
+(10, 'b', 'HJ: message'),
+(10, 'c', '[HJ]message[/HJ]'),
+(11, 'a', 'Au fait de dépouiller un personnage et d\'obtenir de l\'argent de la revente de ses items.'),
+(11, 'b', 'La récupération/perte simultanée de PA, PV et PN.'),
+(11, 'c', 'Un compte ré-activé.'),
+(12, 'a', 'Point de Réussite'),
+(12, 'b', 'Point de Remise'),
+(12, 'c', 'Point de Rangement'),
+(13, 'a', 'Les Points d\' iNaptitude'),
+(13, 'b', 'Les Points de Nourriture'),
+(13, 'c', 'Les Points de \"No-action\"'),
+(14, 'a', 'Le rapporter via PPA'),
+(14, 'b', 'Le rapporter via Email'),
+(14, 'c', 'Le rapporter sur le Forum'),
+(15, 'a', 'Une fonction réservée aux MJ'),
+(15, 'b', 'Une fonction pour contacter un MJ pour poser des questions, pour faire une demande d\'action qui n\'existe pas dans le jeu.'),
+(15, 'c', 'Une fonction réservée uniquement pour proposer des actions et rien d\'autre.'),
+(16, 'a', 'Mettre -INACTIF- en haut de ma description.'),
+(16, 'b', 'Passer le compte à un ami.'),
+(16, 'c', 'Déplacer mon personnage aux douanes dans la salle d\'attente.'),
+(17, 'a', 'La déclarer sur le forum dans la section adéquate.'),
+(17, 'b', 'Envoyer un email à un MJ.'),
+(17, 'c', 'Faire un PPA et expliquer la situation clairement.'),
+(18, 'a', 'Une centrale nucléaire a explosé, ce qui a achevé de polluer l\'atmosphère terrestre.'),
+(18, 'b', 'Un hacker a piraté les chaines télévisuelles pour annoncer la fin du monde.'),
+(18, 'c', 'Le projet d\'une ville dôme a vu le jour.'),
+(18, 'd', 'Le fils du Gouverneur a vu le jour.'),
+(19, 'a', 'Une plante permettant à l\'air de se renouveler dans le dôme.'),
+(19, 'b', 'Un produit chimique permettant de respirer sous l\'eau.'),
+(19, 'c', 'Un nouvel alcool fort.'),
+(20, 'a', 'Un groupe de Hippies révolutionnaires.'),
+(20, 'b', 'Le bras armé et sanguinaire de l\'Ordre.'),
+(20, 'c', 'Un séisme dévastateur.'),
+(21, 'a', 'Le 5 mai 2034.'),
+(21, 'b', 'Pas encore, les criminels expulsés du dôme travaillent en fait à sa construction.'),
+(21, 'c', 'Le 1er mars 2035'),
+(22, 'a', 'En Alaska'),
+(22, 'b', 'En Alabama'),
+(22, 'c', 'En Australie'),
+(23, 'a', 'Une épidémie extrêmement contagieuse s\'est propagée dans le monde.'),
+(23, 'b', 'Un hiver nucléaire, suite à l\'explosion d\'une centrale.'),
+(23, 'c', 'Le taux de pollution dans l\'atmosphère est devenu bien trop élevé'),
+(24, 'a', 'Sarah Manfred.'),
+(24, 'b', 'Le représentant du Mouvement Citoyen'),
+(24, 'c', 'Personne  : des clans se battent pour le pouvoir mais sans vraiment le gagner.'),
+(25, 'a', 'Un savant fou, obsédé par l\'Arche de Noé.'),
+(25, 'b', 'Le dirigeant d\'une des plus grosses corporations mondiales.'),
+(25, 'c', 'Le père de l\'actuel Dirigeant du Dôme.');

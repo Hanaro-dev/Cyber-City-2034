@@ -1,0 +1,58 @@
+<form id="form1" id="form1" method="post" action="?m=Config_Perso2" enctype="multipart/form-data" accept-charset="<?=$SITE_CHARSET;?>">
+		<p class="title">Option du personnage (<?=$PERSO_NAME;?>)</p>
+		<br/><br/>
+
+
+		<p class="name">Réaction automatique à une attaque:</p>
+
+			<p><input type="radio" name="reaction" value="rien" <?if($REACTION=='rien'){echo 'CHECKED ';}?>/>Ne rien faire<br />
+			<input type="radio" name="reaction" value="riposte" <?if($REACTION=='riposte'){echo 'CHECKED ';}?>/>Riposter<br />
+			<input type="radio" name="reaction" value="fuir" <?if($REACTION=='fuir'){echo 'CHECKED ';}?> />Fuir<br />
+			
+			<input type="checkbox" name="esquive" value="1" <?if($ESQUIVE=='1'){echo 'CHECKED ';}?>/> Toujours tenter d'esquiver les attaques</p>
+
+		<br />
+		<br />
+
+
+
+		<p class="name">Action immédiate</p>
+		<textarea name="current_action" style="width : 938px; height : 100px;"><?=$CURRENT_ACTION;?></textarea>
+		<br />
+		<br />
+
+
+		<p class="name">Description Physique</p>
+		<textarea name="description" style="width : 938px; height : 200px;" ><?=$DESCRIPTION;?></textarea>
+		<br />
+		<br />
+
+
+		<p class="name">Historique du personnage</p>
+		<textarea name="background" style="width : 938px; height : 200px;" ><?=$BACKGROUND;?></textarea>
+		<br />
+		<br />
+
+		<p class="name">Image du personnage</p>
+
+			<p><input type="radio" name="imgtype" id="imgtype" value="none"<?if($IMG_SEL==0){?> CHECKED<?}?> />Aucune image</p>
+			
+			<p><input type="radio" name="imgtype" id="imgtype1" value="remote"<?if($IMG_SEL==1){?> CHECKED<?}?> />Image externe</p>
+			<p>http://<input onclick="document.getElementById('imgtype1').checked=1;" type="text" class="text" name="imgurl" value="<?php if (isset($AVATAR_URL) && substr($AVATAR_URL,0,4)=="http") {echo substr($AVATAR_URL,7,strlen($AVATAR_URL)-7);} ?>" size="50" maxlength="200" /></p>
+			<p>Max: <?php echo $IMG_MAXSIZE; ?>Kb, <?php echo $IMG_MAXW; ?>x<?php echo $IMG_MAXH; ?>px.</p>
+
+			
+			<? if(isset($UPLOAD_ACCESS)){ ?>
+				<input type="radio" name="imgtype" id="imgtype2" value="local"<?if($IMG_SEL==2){?> CHECKED<?}?> /><p>Héberger une image:</p>
+				<p>Chemin local: </p><input onclick="document.getElementById('imgtype2').checked=1;" type="file" class="text" name="imgfile">
+				<p>Max: <?php echo $IMG_MAXSIZE; ?>Kb, <?php echo $IMG_MAXW; ?>x<?php echo $IMG_MAXH; ?>px.</p>
+				
+			<? }else{ ?>
+				<?=$PAGE_PUB;?>
+				
+			<? } ?>
+		
+
+			<br/><br/><input class="button" type="submit" name="save" value="Sauvegarder" /><br/><br/><br/>
+
+</form>

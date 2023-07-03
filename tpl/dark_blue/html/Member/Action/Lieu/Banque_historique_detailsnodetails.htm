@@ -1,0 +1,31 @@
+<script type="text/javascript">
+//<!--
+	goBack = function() {
+		<?php if(isset($NIP)){ ?>
+			$("action_redirect").action = "?popup=1&m=Action_Lieu_Guichet3historique";
+		<?php }else{ ?>
+			$("action_redirect").action = "?popup=1&m=Action_Lieu_BanqueHistorique";
+		<?php } ?>
+		ajaxSubmitForm($("action_redirect"));
+	}
+//-->
+</script>
+<form id="action_redirect" method="post" action="">
+<?php if(isset($NIP)){ ?>
+	<input type="hidden" name="carteid" value="<?=$CARD_ID;?>" />
+	<input type="hidden" name="nip" value="<?=$NIP;?>" />
+<?php }else{ ?>
+	<input type="hidden" name="compte" value="<?=$COMPTE;?>" />
+<?php } ?>
+</form>
+
+<br />
+<table class="center" style="width:300px;">
+	<tr>
+		<td class="value">
+			<i>- aucun d&eacute;tail disponible sur cette transaction -</i>
+		</td>
+	</tr>
+</table>
+<span class="fakelink" onclick="goBack();">&lt;&lt; Retour</span>
+<br />

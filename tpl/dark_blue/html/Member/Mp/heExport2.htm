@@ -1,0 +1,14 @@
+<?php
+foreach($MESSAGES as $msg)
+{
+?><?php echo "\r\n"; ?>
+<?=$msg['date'];?><?php echo "\r\n"; ?>
+De: <?=$msg['from'];?> <?php echo "\r\n"; ?>
+A: <?=$msg['to'];?> <?php echo "\r\n"; ?>
+<?php echo "\r\n"; ?>
+<?=$msg['msg'];?> <?php echo "\r\n"; ?>
+<?php echo "\r\n"; ?>
+=================================<?php echo "\r\n"; ?>
+<?php
+}
+?>

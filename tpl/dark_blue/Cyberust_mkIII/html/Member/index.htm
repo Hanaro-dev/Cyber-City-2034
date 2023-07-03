@@ -1,0 +1,102 @@
+<script type="text/javascript" src="./js/m_main02.js"></script>
+<script type="text/javascript" src="./js/m_inv.js"></script>
+<script type="text/javascript" src="./js/m_inv_actions.js"></script>
+<script type="text/javascript" src="./js/m_inv_draganddrop.js"></script>
+<script type="text/javascript">
+	 displayTalkAction = function ()
+	 {
+	 var objContent = $('parler');
+	 objContent.innerHTML = "Chargement en cours ...";
+	 toggleActionPanel();
+	 var myAjax = new Ajax.Request(
+	 '?popup=1&m=Action_Perso_Parler',
+	 {
+	 method: 'get',
+	 parameters: '',
+	 onComplete: fillTalkDiv
+	 }
+	 );
+	 }
+	fillTalkDiv = function(originalRequest)
+	 {
+	 var objContent = $('parler');
+	 var rval= originalRequest.responseText;
+	 objContent.innerHTML = rval;
+	 //actionLoadScripts(elem);
+	 }
+</script>
+
+<!-- Panneau d'information -->
+<a id="haut"></a>
+<div id="top">
+	
+	<div id="infopj">
+		<div id="avatar">
+		<img src="<?=$PERSO->getAvatar();?>" />
+		</div>
+	<div>
+	<?
+			foreach ($MENU_PERSO as $element)
+			{
+				?>
+				<a href="<?=$element['url'];?>"><?=$element['txt'];?></a>
+				<?
+			}
+			?>
+	</div>
+		
+		
+		<a class="shortcuts" title="Fiche perso" href="#" onclick="actionLink('Action_Perso_Ficheperso');return false;"><img src="<?=$SKIN_VIRTUAL_PATH;?>../_common/perso.png"/></a>   <h3><?=$nom;?> </h3><br/>
+		<a class="shortcuts" title="Descriptions" href="#" onclick="actionLink('Action_Perso_Coupdoeil');return false;"><img src="<?=$SKIN_VIRTUAL_PATH;?>../_common/lieu.png"/></a>   <h3><?=$lieu;?> </h3><br/>
+		<a class="shortcuts" href="#" title="Inventaire" onclick="actionLink('Action_Perso_Inventaire');return false;"><img src="<?=$SKIN_VIRTUAL_PATH;?>../_common/equipement.png"/></a>   <h3><?=$argent;?>Ȼ </h3><br/>
+			
+		<a class="shortcuts" href="#" title="Evenements" onclick="toggleActionPanel();"><img src="<?=$SKIN_VIRTUAL_PATH;?>../_common/actions.png"/></a>   
+		<h4>
+		PVs : <span id="perso_pv" class="<?=$PV_COLORCLASS;?>"><?=$pv;?></span>/<?=$pvMax;?>&nbsp;&nbsp;&nbsp;    
+		PAs : <span id="perso_pa" class="<?=$PA_COLORCLASS;?>"><?=$pa;?></span>/<?=$paMax;?> <br />
+		PNs : <span id="perso_pn" class="<?=$PN_COLORCLASS;?>"><?=$pn;?></span>/99&nbsp;&nbsp;&nbsp;    
+		PRs : <span id="perso_pr" class="<?=$PR_COLORCLASS;?>"><?=$pr;?></span>/<?=$prmax;?> </h4>
+
+		<!-- Abonnement (obsolète)
+		<h5><?=$membre;?>(<a href="?m=Mp_Index">+ détails</a>)</h5>
+		-->
+	</div>
+
+	<!-- Action immédiate -->
+	<div id="action_immediate">	
+		<form id="formActionImmediate" method="post" action="">
+				<textarea name="actionImmediate" id="actionImmediate" style= "line-height : 13px;" ><?=$actionImmediate;?></textarea>
+				<br />
+					<input type="submit" class="button" name="saveActionImmediate" value="Action en cours" />
+		</form>
+	</div>
+	<!-- PARLER -->
+	
+	<div id="parler"></div>
+	<!-- END PARLER -->
+
+
+
+
+<!-- Affichage du panneau d'action -->
+<div id="actionPanel">
+	<div id="actionPanelContent"></div>
+</div>
+
+
+<!-- Affichage du HE-->
+<div id="historique">
+<br/>
+<p class="title" >Historique des évènements</p>
+<form id="he" method="post" action="?m=He_Delete">
+	<?=$PAGE_HE_MESSAGES;?>
+	<?=$PAGE_HE_HEADER;?>
+</form>
+
+<a id="bas"></a>
+
+</div>
+
+<script type="text/javascript">
+displayTalkAction();
+</script>

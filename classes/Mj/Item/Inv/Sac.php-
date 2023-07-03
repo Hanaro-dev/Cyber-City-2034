@@ -1,0 +1,244 @@
+<?php
+class Visitor_Login2{
+	public static function generatePage(&$tpl, &$db, &$session, &$account)
+	{	//BUT: Vérifier l'authentification
+		
+		$errorNo = self::tryLogin($db, $session, $account, $_POST['u'], $_POST['p']);
+		
+		if ($errorNo==0){
+		
+			//Authentification réussie
+			self::doRemise($db, $account);
+			return $tpl->fetch($account->getSkinRemotePhysicalPath() . 'html/Visitor/login_ok.htm',__FILE__,__LINE__);
+		}else{
+			
+			//Échec de l'identification
+			$tpl->set('ERRORNO',$errorNo);
+			return $tpl->fetch($account->getSkinRemotePhysicalPath() . 'html/Visitor/login_wrong.htm',__FILE__,__LINE__);
+		}
+		
+		//Retourner le template complété/rempli
+		
+		
+	}
+	
+	
+	
+	private static function tryLogin(&$db, &$session, &$account, $user,$pass)
+	{	//BUT: Faire une tentative de login
+		
+		
+		$query = 'SELECT id, pass, inscription_valide 
+					FROM ' . DB_PREFIX . 'account
+					WHERE user="' . addslashes($user) . '";';
+		if     (!@$result = $db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__))
+			return 1;	// 1: Erreur dans la requête
+		elseif (mysql_num_rows($result) < 1)
+			return 2;	// 2: Aucun utilisateur existant
+		elseif (mysql_num_rows($result) > 1)
+			return 3;	// 3: Doublon
+		elseif (!@$arr = mysql_fetch_assoc($result))
+			return 4;	// 4: Normalement impossible
+		elseif ($arr['pass'] != crypt($pass,strtolower($user)))
+			return 5;	// 5: Mot de passe incorrecte
+		elseif ($arr['inscription_valide'] == 0)
+			return 6;	// 6: Incription non validée
+		else{
+			//Login OK.
+			
+			//Associer le compte à la session
+			$session->setSessVar($db,'userId',$arr['id']); 
+			
+			//$this->userId = $arr['id'];
+			//$this->user = $user;
+			
+			//Mettre à jour la derniere activité
+			$query = 'UPDATE `' . DB_PREFIX . 'account`
+						SET `last_conn`="' . CURRENTTIME . '"
+						WHERE `id`=' . $session->getSessVar('userId') . ';';
+			$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+			
+			
+			//Vérifier l'accès MJ/Admin => devrait être détecté automatiquement par $account->LoadSession();
+			/*
+			$query = 'SELECT id
+						FROM ' . DB_PREFIX . 'mj
+						WHERE `userId`=' . $session->getSessVar('userId') . ';';
+			$result = $db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+			if (mysql_num_rows($result)>0){
+				$arr = mysql_fetch_assoc($result);
+				$this->mjId = $arr['id'];
+			}
+			*/
+			
+			//Sauvegarder la liste des personnages du compte
+			$query = 'SELECT id, nom
+						FROM ' . DB_PREFIX . 'perso
+						WHERE userId="' . $session->getSessVar('userId') . '";';
+			$result = $db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+			$i=0;
+			while ($arr = mysql_fetch_assoc($result))
+				$perso_list[$i++] = $arr;
+			
+			$session->setSessVar($db, 'persoList', $perso_list);
+			
+			
+			
+			return 0; //Aucune erreur;
+		}
+	}
+	
+	
+	private static function doRemise(&$db, &$account)
+	{	//BUT: Effectuer la remise des PA
+	
+	
+		$paParRemise = 50;
+		$remiseParLogin = 5;
+		
+		$now = mktime (date("H"), date("i"), date("s"), date("m"), date("d"), date("Y"));
+		$nextnow = mktime (date("H"), date("i"), date("s"), date("m"), date("d")+1, date("Y"));
+		
+		//Tagger tout les comptes qui doivent recevoir une remise
+		$query = 'UPDATE ' . DB_PREFIX . 'account
+					SET remise_tag="' . $account->getUser() . '"
+					WHERE remise_tag IS NULL AND remise<' . $now . '
+					LIMIT ' . $remiseParLogin . ';';
+		$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+		
+		//Sélectionner tout les comptes taggés
+		$query = 'SELECT id,user,remise,last_conn
+					FROM ' . DB_PREFIX . 'account
+					WHERE remise_tag="' . $account->getUser() . '";';
+		$resultA = $db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+		
+		
+		//Scan tout les accounts qui doivent avoir une remise
+		$remise_encours=0;
+		while ($arrA = mysql_fetch_assoc($resultA)) { 
+		
+			if (SITE_DEBUG==true)
+				echo 'Remise #' . ++$remise_encours . '/' . $remiseParLogin . '<br />';
+		
+			$query = 'SELECT id,pa,pamax,lieu
+						FROM ' . DB_PREFIX . 'perso
+						WHERE user="' . $arrA['user'] . '";';
+			$resultB = $db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+			
+			//Passe tout les perso d'un compte
+			while ($arrP = mysql_fetch_assoc($resultB)) { 		
+				
+				//Update PN
+				$query = 'UPDATE ' . DB_PREFIX . 'perso
+							SET pn=pn-1
+							WHERE id=' . $arrP['id'] . ' AND pn>0;';
+				$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+				
+				//Update Drogues
+				$query = 'UPDATE ' . DB_PREFIX . 'item_inv
+							LEFT JOIN ' . DB_PREFIX . 'item_db ON (db_id=inv_dbid)
+							SET inv_remiseleft=inv_remiseleft-1
+							WHERE db_type="drogue" AND inv_persoid=' . $arrP['id'] . ';';
+				$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+				
+				//Update Bannissement pour vol
+				$query = 'UPDATE ' . DB_PREFIX . 'lieu_ban
+							SET remiseleft=remiseleft-1
+							WHERE persoid=' . $arrP['id'] . ';';
+				$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+				
+				//Supprimer les portes tenues innutilisés
+				$query = 'DELETE FROM ' . DB_PREFIX . 'lieu_tenirporte
+							WHERE expiration<' . $now . ';';
+				$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+				
+				//Supprimer toutes les drogues épuissées
+					//SHOCK EFFECT de la drogue (effect secondaire)
+					$query = 'SELECT invd.inv_id,invm.inv_perc, dbd.*
+								FROM ' . DB_PREFIX . 'item_inv as invd
+								LEFT JOIN ' . DB_PREFIX . 'item_inv_droguemelange as invm
+										ON ( invm.inv_melangeid = invd.inv_melangeid ) 
+								LEFT JOIN ' . DB_PREFIX . 'item_db as dbd
+										ON (dbd.db_id=invm.inv_baseid)
+								WHERE invd.inv_remiseleft=0
+										AND dbd.db_type="drogue"
+										AND invd.inv_persoid=' . $arrP['id'] . ';';
+					$resultD= $db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+					
+					$shock_pa=0;
+					$shock_pv=0;
+					while($arr=mysql_fetch_array($resultD)){
+						$shock_pa += $arr['db_shock_pa'];
+						$shock_pv -= $arr['db_shock_pv'];
+						
+						//Effacer cette drogue si elle est expirée
+						$query = 'DELETE FROM ' . DB_PREFIX . 'iteminv_drogue
+									WHERE inv_remiseleft=0 AND inv_qte=0 AND inv_id=' . $arr['inv_id'] . ';';
+						$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+						
+					}
+					
+					
+					//Update PA
+					$paParRemise -= $shock_pa;
+					
+					if ( ($paParRemise+$arrP['pa']) <= $arrP['pamax']) //La remise n'excede pas le maximum de pa
+						$newPaValue = $paParRemise+$arrP['pa'];
+					else
+						$newPaValue = $arrP['pamax'];
+					
+					$query = 'UPDATE ' . DB_PREFIX . 'perso
+								SET pa="' . $newPaValue . '", soin=0
+								WHERE id="' . $arrP['id'] . '";';
+					$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+					
+					
+					//Update PV
+					$shock_pv+=1; //1 étant la remise de PV
+					$query = 'UPDATE ' . DB_PREFIX . 'perso
+								SET pv=pv+' . $shock_pv . '
+								WHERE id=' . $arrP['id'] . ' AND pv<pvmax;';
+					$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+					
+					
+					
+				
+				//Remettre le remiseleft à null si il reste des quantités non-consomé (dans le cas ou la drogue est pas effacée)
+				$query = 'UPDATE ' . DB_PREFIX . 'item_inv
+							LEFT JOIN ' . DB_PREFIX . 'item_db ON (db_id=inv_dbid)
+							SET inv_remiseleft=null
+							WHERE inv_qte>0 AND inv_remiseleft=0 AND db_type="drogue";';
+				$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+				
+				
+				//Supprimer toutes les banissement achevés
+				$query = 'DELETE FROM ' . DB_PREFIX . 'lieu_ban
+							WHERE remiseleft<1;';
+				$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+				
+				//Rendre les comptes M+ expiré Niveau 0
+				$query = 'UPDATE ' . DB_PREFIX . 'account
+							SET mp="0", mp_expiration=0
+							WHERE mp_expiration<' . $now . ' AND mp!="0";';
+				$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+				
+				
+				//require_once("classes/Member/Perso.php");
+				Member_He::add($db, 'System', $arrP['id'], 'remise', 'Remise de PA effectué.');
+			}
+			$query = 'UPDATE ' . DB_PREFIX . 'account SET remise="' . $nextnow . '" WHERE id=' . $arrA['id'] . ';';
+			$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+			
+		
+		}
+		
+		//Détagger tous les comptes taggés.
+		$query = 'UPDATE ' . DB_PREFIX . 'account
+					SET remise_tag=null
+					WHERE remise_tag="' . $account->getUser() . '";';
+		$db->query($query,__FILE__,__LINE__,__FUNCTION__,__CLASS__,__METHOD__);
+	}
+	
+	
+}
+?>

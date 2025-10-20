@@ -89,73 +89,80 @@
 
 ### 2.2 Structure des dossiers Nuxt 4
 
+**⚠️ IMPORTANT : Nuxt 4 introduit une nouvelle structure avec le dossier `app/`**
+
+Cette nouvelle organisation améliore les performances (file watchers plus rapides) et donne un meilleur contexte à votre IDE.
+
 ```
 cyber-city-2034/
 ├── .nuxt/                    # Build artifacts (auto-généré)
-├── assets/                   # Assets non compilés (SCSS, images)
-│   ├── css/
-│   │   └── main.css
-│   └── images/
-├── components/               # Composants Vue réutilisables
-│   ├── auth/
-│   │   ├── LoginForm.vue
-│   │   └── RegisterForm.vue
-│   ├── character/
-│   │   ├── CharacterCard.vue
-│   │   ├── CharacterStats.vue
-│   │   └── CharacterInventory.vue
-│   ├── game/
-│   │   ├── Map.vue
-│   │   ├── Combat.vue
-│   │   └── ActionPanel.vue
-│   ├── ui/
-│   │   ├── Button.vue
-│   │   ├── Modal.vue
-│   │   └── Toast.vue
-│   └── layout/
-│       ├── Header.vue
-│       ├── Sidebar.vue
-│       └── Footer.vue
-├── composables/              # Composition API helpers
-│   ├── useAuth.ts
-│   ├── useCharacter.ts
-│   ├── useInventory.ts
-│   ├── useCombat.ts
-│   └── useWebSocket.ts
-├── layouts/                  # Layouts Nuxt
-│   ├── default.vue
-│   ├── game.vue
-│   └── admin.vue
-├── middleware/               # Middlewares de route
-│   ├── auth.ts
-│   ├── guest.ts
-│   └── gm.ts               # Game Master only
-├── pages/                    # Pages (routing auto)
-│   ├── index.vue            # Page d'accueil
-│   ├── login.vue
-│   ├── register.vue
-│   ├── characters/
-│   │   ├── index.vue        # Liste personnages
-│   │   ├── create.vue
-│   │   └── [id].vue         # Détail personnage
-│   ├── game/
-│   │   ├── index.vue        # Vue principale du jeu
-│   │   ├── map.vue
-│   │   ├── inventory.vue
-│   │   └── combat.vue
-│   ├── bank/
-│   │   └── index.vue
-│   ├── shop/
-│   │   └── [id].vue
-│   └── admin/               # Zone MJ
-│       └── index.vue
-├── plugins/                  # Plugins Nuxt
-│   ├── api.ts
-│   └── toast.ts
+├── app/                      # 🆕 TOUT le code applicatif vit ici
+│   ├── assets/              # Assets non compilés (SCSS, images)
+│   │   ├── css/
+│   │   │   └── main.css
+│   │   └── images/
+│   ├── components/          # Composants Vue réutilisables
+│   │   ├── auth/
+│   │   │   ├── LoginForm.vue
+│   │   │   └── RegisterForm.vue
+│   │   ├── character/
+│   │   │   ├── CharacterCard.vue
+│   │   │   ├── CharacterStats.vue
+│   │   │   └── CharacterInventory.vue
+│   │   ├── game/
+│   │   │   ├── Map.vue
+│   │   │   ├── Combat.vue
+│   │   │   └── ActionPanel.vue
+│   │   └── ui/
+│   │       ├── Button.vue
+│   │       ├── Modal.vue
+│   │       └── Toast.vue
+│   ├── composables/         # Composition API helpers
+│   │   ├── useAuth.ts
+│   │   ├── useCharacter.ts
+│   │   ├── useInventory.ts
+│   │   ├── useCombat.ts
+│   │   └── useWebSocket.ts
+│   ├── layouts/             # Layouts Nuxt
+│   │   ├── default.vue
+│   │   ├── game.vue
+│   │   └── admin.vue
+│   ├── middleware/          # Middlewares de route (client)
+│   │   ├── auth.ts
+│   │   ├── guest.ts
+│   │   └── gm.ts           # Game Master only
+│   ├── pages/               # Pages (routing auto)
+│   │   ├── index.vue       # Page d'accueil
+│   │   ├── login.vue
+│   │   ├── register.vue
+│   │   ├── characters/
+│   │   │   ├── index.vue   # Liste personnages
+│   │   │   ├── create.vue
+│   │   │   └── [id].vue    # Détail personnage
+│   │   ├── game/
+│   │   │   ├── index.vue   # Vue principale du jeu
+│   │   │   ├── map.vue
+│   │   │   ├── inventory.vue
+│   │   │   └── combat.vue
+│   │   ├── bank/
+│   │   │   └── index.vue
+│   │   ├── shop/
+│   │   │   └── [id].vue
+│   │   └── admin/          # Zone MJ
+│   │       └── index.vue
+│   ├── plugins/             # Plugins Nuxt (client)
+│   │   ├── api.client.ts
+│   │   └── toast.client.ts
+│   ├── utils/               # Utilitaires (client)
+│   │   ├── formatters.ts
+│   │   └── validators.ts
+│   ├── app.vue              # 🆕 Composant racine de l'app
+│   ├── app.config.ts        # 🆕 Configuration app (runtime)
+│   └── error.vue            # 🆕 Page d'erreur globale
 ├── public/                   # Fichiers statiques
 │   ├── favicon.ico
 │   └── robots.txt
-├── server/                   # API Backend (Nitro)
+├── server/                   # 🔵 API Backend (Nitro) - Code serveur
 │   ├── api/                 # Routes API
 │   │   ├── auth/
 │   │   │   ├── login.post.ts
@@ -180,18 +187,19 @@ cyber-city-2034/
 │   │   ├── db.ts
 │   │   ├── jwt.ts
 │   │   └── validators.ts
-│   └── plugins/
-│       └── database.ts
-├── stores/                   # Pinia stores
-│   ├── auth.ts
-│   ├── character.ts
-│   ├── game.ts
-│   └── ui.ts
-├── types/                    # TypeScript types
-│   ├── api.ts
-│   ├── character.ts
-│   ├── game.ts
-│   └── database.ts
+│   ├── plugins/             # Plugins serveur
+│   │   └── database.ts
+│   └── database/            # Schema et migrations
+│       ├── schema.ts
+│       └── migrations/
+├── shared/                   # 🆕 Code partagé client/serveur
+│   ├── types/               # Types TypeScript communs
+│   │   ├── api.ts
+│   │   ├── character.ts
+│   │   ├── game.ts
+│   │   └── database.ts
+│   └── constants/           # Constantes partagées
+│       └── game-config.ts
 ├── .env                      # Variables d'environnement
 ├── nuxt.config.ts           # Configuration Nuxt
 ├── package.json
@@ -199,6 +207,14 @@ cyber-city-2034/
 ├── tailwind.config.ts
 └── README.md
 ```
+
+**Changements majeurs par rapport à Nuxt 3 :**
+
+1. **Dossier `app/`** : Tout le code applicatif client est maintenant dans `app/`
+2. **Dossier `shared/`** : Nouveau dossier pour le code partagé entre client et serveur
+3. **Séparation TypeScript** : Nuxt 4 crée des projets TS séparés pour `app/`, `server/`, et `shared/`
+4. **Fichiers racine dans `app/`** : `app.vue`, `app.config.ts`, `error.vue` sont dans `app/`
+5. **Pas de dossier `stores/`** : Pinia peut être utilisé via composables dans `app/composables/`
 
 ---
 
@@ -327,7 +343,16 @@ npm install jose  # Pour JWT
 npm install -D @nuxtjs/eslint-config-typescript
 ```
 
-5. Configuration initiale de `nuxt.config.ts` :
+5. Créer `app/app.vue` (point d'entrée de l'application) :
+```vue
+<template>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
+</template>
+```
+
+6. Configuration initiale de `nuxt.config.ts` :
 ```typescript
 export default defineNuxtConfig({
   devtools: { enabled: true },
@@ -1060,11 +1085,11 @@ import type { Config } from 'tailwindcss';
 
 export default {
   content: [
-    './components/**/*.{js,vue,ts}',
-    './layouts/**/*.vue',
-    './pages/**/*.vue',
-    './plugins/**/*.{js,ts}',
-    './app.vue',
+    './app/components/**/*.{js,vue,ts}',
+    './app/layouts/**/*.vue',
+    './app/pages/**/*.vue',
+    './app/plugins/**/*.{js,ts}',
+    './app/**/*.vue',
   ],
   theme: {
     extend: {
@@ -1082,7 +1107,7 @@ export default {
 } satisfies Config;
 ```
 
-Créer `assets/css/main.css` :
+Créer `app/assets/css/main.css` :
 ```css
 @tailwind base;
 @tailwind components;
@@ -1111,7 +1136,7 @@ Créer `assets/css/main.css` :
 
 ### Étape 4.2 : Store Pinia pour l'authentification
 
-**Créer** `stores/auth.ts` :
+**Créer** `app/stores/auth.ts` (ou utiliser composables) :
 
 ```typescript
 import { defineStore } from 'pinia';
@@ -1197,10 +1222,10 @@ export const useAuthStore = defineStore('auth', {
 
 ### Étape 4.3 : Composables utilitaires
 
-**Créer** `composables/useApi.ts` :
+**Créer** `app/composables/useApi.ts` :
 
 ```typescript
-import { useAuthStore } from '~/stores/auth';
+import { useAuthStore } from '~/stores/auth'; // ou ~/app/stores/auth
 
 export const useApi = () => {
   const authStore = useAuthStore();
@@ -1226,7 +1251,7 @@ export const useApi = () => {
 };
 ```
 
-**Créer** `composables/useCharacter.ts` :
+**Créer** `app/composables/useCharacter.ts` :
 
 ```typescript
 export const useCharacter = () => {
@@ -1257,7 +1282,7 @@ export const useCharacter = () => {
 
 ### Étape 4.4 : Pages principales
 
-**Page de login** `pages/login.vue` :
+**Page de login** `app/pages/login.vue` :
 
 ```vue
 <template>
@@ -1335,7 +1360,7 @@ const handleLogin = async () => {
 </script>
 ```
 
-**Liste des personnages** `pages/characters/index.vue` :
+**Liste des personnages** `app/pages/characters/index.vue` :
 
 ```vue
 <template>
@@ -1424,7 +1449,7 @@ const handleCreate = async () => {
 
 ### Étape 4.5 : Middleware de route
 
-**Middleware auth** `middleware/auth.ts` :
+**Middleware auth** `app/middleware/auth.ts` :
 
 ```typescript
 export default defineNuxtRouteMiddleware((to, from) => {
@@ -1436,7 +1461,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 });
 ```
 
-**Middleware guest** `middleware/guest.ts` :
+**Middleware guest** `app/middleware/guest.ts` :
 
 ```typescript
 export default defineNuxtRouteMiddleware((to, from) => {
@@ -1490,7 +1515,7 @@ export default defineEventHandler(async (event) => {
 **Frontend** - Composant inventaire :
 
 ```vue
-<!-- components/game/Inventory.vue -->
+<!-- app/components/game/Inventory.vue -->
 <template>
   <div class="card">
     <h2 class="text-2xl font-bold mb-4">Inventaire</h2>
